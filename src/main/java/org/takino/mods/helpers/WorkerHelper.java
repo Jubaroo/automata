@@ -6,7 +6,6 @@ import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemFactory;
-import com.wurmonline.server.items.ItemTemplate;
 import com.wurmonline.server.items.NoSuchTemplateException;
 import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zones;
@@ -41,7 +40,8 @@ public class WorkerHelper {
         item.setTemplateId(942);
         item.updateModelNameOnGroundItem();
     }
-    public static void removeJob(Long wurmid){
+
+    public static void removeJob(Long wurmid) {
         if (contains(wurmid)) {
             runningJobs.remove(wurmid);
             performerMap.remove(wurmid);
@@ -55,6 +55,7 @@ public class WorkerHelper {
             }
         }
     }
+
     public static boolean contains(Long wurmid) {
         return runningJobs.contains(wurmid);
     }
@@ -64,17 +65,11 @@ public class WorkerHelper {
     }
 
 
-
-
-
-
-
     public static void shutDown() {
-        for (Long i: runningJobs) {
+        for (Long i : runningJobs) {
             removeJob(i);
         }
     }
-
 
 
     public static void removeItemFromBsb(Item bsb, Item toRemove, int number) {
@@ -82,20 +77,19 @@ public class WorkerHelper {
         while (items.hasNext()) {
             Item i = items.next();
             if (i.getRealTemplateId() == toRemove.getTemplateId() &&
-                    i.getMaterial()==toRemove.getMaterial() &&
-                    i.getAuxData()==toRemove.getAuxData()) {
-                float newQuantity = i.getBulkNumsFloat(false)-number;
-                if (newQuantity<0) {
-                    Items.destroyItem(i.getWurmId());
+                    i.getMaterial() == toRemove.getMaterial() &&
+                    i.getAuxData() == toRemove.getAuxData()) {
+                float newQuantity = i.getBulkNumsFloat(false) - number;
+                if (newQuantity < 0) {
+                    newQuantity = 0;
                 }
-                else {
-                   int newWeight = (int) newQuantity * i.getRealTemplate().getWeightGrams();
-                   i.setWeight(newWeight, true);
-                }
-
+                int newWeight = (int) newQuantity * i.getRealTemplate().getWeightGrams();
+                i.setWeight(newWeight, true);
             }
+
         }
     }
+
 
     public static void addItemToCrate(Item crate, Item toInsert) throws NoSuchTemplateException, FailedException {
         Iterator<Item> items = crate.getItems().iterator();
@@ -147,8 +141,6 @@ public class WorkerHelper {
     }
 
 
-
-
     public static Item findBulkContainerOrNull(Item item, int containedItem) {
         int initialX = item.getTileX();
         int initialY = item.getTileY();
@@ -159,16 +151,16 @@ public class WorkerHelper {
                 VolaTile vtile = Zones.getTileOrNull(x, y, item.isOnSurface());
                 if (vtile != null && vtile.getItems() != null) {
                     for (Item s : vtile.getItems()) {
-                       if (s.isBulkContainer()
-                               && !s.isCrate()) {
-                           for (Item inside: s.getItemsAsArray()) {
-                               if (inside.getRealTemplateId()==containedItem) {
-                                   if (inside.getBulkNumsFloat(false)>1) {
-                                       return s;
-                                   }
-                               }
-                           }
-                       }
+                        if (s.isBulkContainer()
+                                && !s.isCrate()) {
+                            for (Item inside : s.getItemsAsArray()) {
+                                if (inside.getRealTemplateId() == containedItem) {
+                                    if (inside.getBulkNumsFloat(false) > 1) {
+                                        return s;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -207,17 +199,17 @@ public class WorkerHelper {
     }
 
     private static boolean isFull(Item crate) {
-        int count =0;
+        int count = 0;
         for (Item i : crate.getItemsAsArray()) {
-            count+=i.getBulkNums();
+            count += i.getBulkNums();
         }
         if (crate.getTemplateId() == 852) {
             debug("Large container found!");
-            return count>= 300;
+            return count >= 300;
 
         } else {
             debug("Small container found!");
-            return count>= 150;
+            return count >= 150;
         }
     }
 
@@ -228,14 +220,14 @@ public class WorkerHelper {
             debug("Power is under minimum, powering down");
             return false;
         } else {
-            debug("current powerlevel: " +  DatabaseHelper.getCurrentPowerLevel(item));
+            debug("current powerlevel: " + DatabaseHelper.getCurrentPowerLevel(item));
             return true;
         }
     }
 
 
     public static int getMaxAmount(Item item) {
-        return (int) Math.max(1.0, item.getSpellEffectPower((byte)121)/ 10 + item.getCurrentQualityLevel()/20);
+        return (int) Math.max(1.0, item.getSpellEffectPower((byte) 121) / 10 + item.getCurrentQualityLevel() / 20);
     }
 
 }
