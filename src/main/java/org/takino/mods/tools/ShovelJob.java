@@ -7,6 +7,7 @@ import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemFactory;
 import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.items.NoSuchTemplateException;
+import com.wurmonline.server.sounds.SoundPlayer;
 import org.takino.mods.Config;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
@@ -20,6 +21,17 @@ public class ShovelJob implements ToolJob {
         tryDigAround(target);
     }
 
+
+
+    private static void playRandomSound(Item item) {
+        String[] sounds= {
+                "sound.work.digging1",
+                "sound.work.digging2",
+                "sound.work.digging3"
+        };
+        int rand = Server.rand.nextInt(2);
+        SoundPlayer.playSound(sounds[rand], item, item.getPosZ());
+    }
 
     private static void tryDigAround(Item item) throws NoSuchTemplateException, FailedException {
         if (!item.isOnSurface()) {
@@ -88,6 +100,7 @@ public class ShovelJob implements ToolJob {
         // toInsert.setWeight(num * toInsert.getTemplate().getWeightGrams(), true);
         WorkerHelper.addItemToCrate(container, toInsert);
         container.updateModelNameOnGroundItem();
+        playRandomSound(item);
         DatabaseHelper.decreasePower(item, DatabaseHelper.getUsage(item));
     }
 }

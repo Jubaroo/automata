@@ -8,6 +8,7 @@ import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemFactory;
 import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.items.NoSuchTemplateException;
+import com.wurmonline.server.sounds.SoundPlayer;
 import org.takino.mods.Config;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
@@ -22,6 +23,15 @@ public class ChiselJob implements ToolJob {
 
     private static Item findSourceBsb(Item item, int templateid) {
         return WorkerHelper.findBulkContainerOrNull(item, templateid);
+    }
+
+    private static void playRandomSound(Item item) {
+        String[] sounds= {
+                "sound.work.masonry",
+                "sound.work.stonecutting"
+        };
+        int rand = Server.rand.nextInt(1);
+        SoundPlayer.playSound(sounds[rand], item, item.getPosZ());
     }
 
     private static void chiselSome(Item item) throws NoSuchTemplateException, FailedException {
@@ -60,6 +70,7 @@ public class ChiselJob implements ToolJob {
                 return;
         }
         float ql = Server.rand.nextFloat() * Config.maxQualityLevel;
+        playRandomSound(item);
         Item creation = ItemFactory.createItem(templateId, ql, (byte) 0, null);
         creation.setWeight(num*creation.getTemplate().getWeightGrams(), true);
         WorkerHelper.addItemToCrate(targetCrate, creation);
