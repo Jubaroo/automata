@@ -35,6 +35,10 @@ public class ChiselJob implements ToolJob {
                 break;
             }
         }
+        if (sourceBsb==null) {
+            WorkerHelper.removeJob(item.getWurmId());
+            return;
+        }
         Item targetCrate = WorkerHelper.findBulkContainerOrNull(item);
         int num = (int) (Config.defaultQuantity + Config.defaultQuantity *
                 (Server.rand.nextFloat() * WorkerHelper.getMaxAmount(item)));
