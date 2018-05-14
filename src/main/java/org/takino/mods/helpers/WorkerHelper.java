@@ -6,6 +6,7 @@ import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemFactory;
+import com.wurmonline.server.items.ItemTemplate;
 import com.wurmonline.server.items.NoSuchTemplateException;
 import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zones;
@@ -75,34 +76,26 @@ public class WorkerHelper {
     }
 
 
-    public static Item findBulkContainerOrNull(Item item, boolean returnFull) {
-        int initialX = item.getTileX();
-        int initialY = item.getTileY();
-        float effect = item.getSpellEffectPower((byte) 121); //TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
-        int radius = (int) Math.max(1.0, effect / 10);
-        for (int x = initialX - radius; x <= initialX + radius; x++) {
-            for (int y = initialY - radius; y <= initialY + radius; y++) {
-                VolaTile vtile = Zones.getTileOrNull(x, y, item.isOnSurface());
-                if (vtile != null && vtile.getItems() != null) {
-                    for (Item s : vtile.getItems()) {
-                        if (s.isCrate()) { // Dont' want BSBs to be used, too OP
-                            if (returnFull) {
-                                return s;
-                            } else {
-                                if (!isFull(s)) {
-                                    return s;
-                                }
-                            }
-                        }
-                    }
+
+    public static void removeItemFromBsb(Item bsb, Item toRemove, int number) {
+        Iterator<Item> items = bsb.getItems().iterator();
+        while (items.hasNext()) {
+            Item i = items.next();
+            if (i.getRealTemplateId() == toRemove.getTemplateId() &&
+                    i.getMaterial()==toRemove.getMaterial() &&
+                    i.getAuxData()==toRemove.getAuxData()) {
+                float newQuantity = i.getBulkNumsFloat(false)-number;
+                if (newQuantity<0) {
+                    Items.destroyItem(i.getWurmId());
                 }
+                else {
+                   int newWeight = (int) newQuantity * i.getRealTemplate().getWeightGrams();
+                   i.setWeight(newWeight, true);
+                }
+
             }
         }
-        return null;
     }
-
-
-
 
     public static void addItemToCrate(Item crate, Item toInsert) throws NoSuchTemplateException, FailedException {
         Iterator<Item> items = crate.getItems().iterator();
@@ -153,8 +146,64 @@ public class WorkerHelper {
         }
     }
 
+
+
+
+    public static Item findBulkContainerOrNull(Item item, int containedItem) {
+        int initialX = item.getTileX();
+        int initialY = item.getTileY();
+        float effect = item.getSpellEffectPower((byte) 121); //TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
+        int radius = (int) Math.max(1.0, effect / 10);
+        for (int x = initialX - radius; x <= initialX + radius; x++) {
+            for (int y = initialY - radius; y <= initialY + radius; y++) {
+                VolaTile vtile = Zones.getTileOrNull(x, y, item.isOnSurface());
+                if (vtile != null && vtile.getItems() != null) {
+                    for (Item s : vtile.getItems()) {
+                       if (s.isBulkContainer()
+                               && !s.isCrate()) {
+                           for (Item inside: s.getItemsAsArray()) {
+                               if (inside.getRealTemplateId()==containedItem) {
+                                   if (inside.getBulkNumsFloat(false)>1) {
+                                       return s;
+                                   }
+                               }
+                           }
+                       }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static Item findBulkContainerOrNull(Item item) {
         return findBulkContainerOrNull(item, false);
+    }
+
+    public static Item findBulkContainerOrNull(Item item, boolean returnFull) {
+        int initialX = item.getTileX();
+        int initialY = item.getTileY();
+        float effect = item.getSpellEffectPower((byte) 121); //TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
+        int radius = (int) Math.max(1.0, effect / 10);
+        for (int x = initialX - radius; x <= initialX + radius; x++) {
+            for (int y = initialY - radius; y <= initialY + radius; y++) {
+                VolaTile vtile = Zones.getTileOrNull(x, y, item.isOnSurface());
+                if (vtile != null && vtile.getItems() != null) {
+                    for (Item s : vtile.getItems()) {
+                        if (s.isCrate()) { // Dont' want BSBs to be used, too OP
+                            if (returnFull) {
+                                return s;
+                            } else {
+                                if (!isFull(s)) {
+                                    return s;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static boolean isFull(Item crate) {
@@ -173,5 +222,20 @@ public class WorkerHelper {
     }
 
 
+    public static boolean hasEnoughPower(Item item, float power) {
+        if (power > DatabaseHelper.getCurrentPowerLevel(item)) {
+            WorkerHelper.removeJob(item.getWurmId());
+            debug("Power is under minimum, powering down");
+            return false;
+        } else {
+            debug("current powerlevel: " +  DatabaseHelper.getCurrentPowerLevel(item));
+            return true;
+        }
+    }
+
+
+    public static int getMaxAmount(Item item) {
+        return (int) Math.max(1.0, item.getSpellEffectPower((byte)121)/ 10 + item.getCurrentQualityLevel()/20);
+    }
 
 }

@@ -26,15 +26,10 @@ public class ShovelJob implements ToolJob {
             return;
         }
         // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
-        float power = Math.max(Math.min(50.0f/(item.getQualityLevel()+item.getSpellEffectPower((byte) 121)),3.0f),0.5f);
 
-        if (power > DatabaseHelper.getCurrentPowerLevel(item)) {
-            WorkerHelper.removeJob(item.getWurmId());
-            debug("Power is under minimum, powering down");
-            return;
-        } else {
-            debug("current powerlevel: " +  DatabaseHelper.getCurrentPowerLevel(item));
-        }
+       if (!WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
+           return;
+       }
 
         debug("Will be digging now.");
         int initialX = item.getTileX();
@@ -45,7 +40,7 @@ public class ShovelJob implements ToolJob {
         // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
         float effect = item.getSpellEffectPower((byte) 121);
         int radius = (int) Math.max(1.0, effect / 10);
-        int maxAmount = (int) Math.max(1.0, effect / 10 + item.getCurrentQualityLevel()/20);
+        int maxAmount = WorkerHelper.getMaxAmount(item);
         outerloop:
         for (int x = initialX - radius; x <= initialX + radius; x++) {
 
@@ -88,10 +83,11 @@ public class ShovelJob implements ToolJob {
                 (Server.rand.nextFloat() * maxAmount));
         debug("Creating " + num + " items");
         Item toInsert = ItemFactory.createItem(templateId, ql, (byte) 0, null);
+        toInsert.setWeight(num*toInsert.getTemplate().getWeightGrams(), true);
         debug("Weight: " + toInsert.getWeightGrams());
         // toInsert.setWeight(num * toInsert.getTemplate().getWeightGrams(), true);
         WorkerHelper.addItemToCrate(container, toInsert);
         container.updateModelNameOnGroundItem();
-        DatabaseHelper.decreasePower(item, power);
+        DatabaseHelper.decreasePower(item, DatabaseHelper.getUsage(item));
     }
 }

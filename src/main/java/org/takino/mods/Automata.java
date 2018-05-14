@@ -12,6 +12,7 @@ import org.takino.mods.actions.FuelUpAction;
 import org.takino.mods.actions.StartWorkAction;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
+import org.takino.mods.tools.ChiselJob;
 import org.takino.mods.tools.ShovelJob;
 import org.takino.mods.tools.ToolJob;
 
@@ -58,11 +59,14 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
     private static void workOnThings(Item item) {
         //find attached tool
         try {
+            debug("Wee-wee, getting a tool");
             ToolType type = getAttachedTool(item);
             ToolJob job = WorkerHelper.getJob(type);
             if (job == null) {
+                debug("No tool :(");
                 WorkerHelper.removeJob(item.getWurmId());
             } else {
+                debug("Some tool :)");
                 job.doWork(item);
             }
         } catch (SQLException | NoSuchTemplateException | FailedException | IOException e) {
@@ -74,7 +78,7 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
 
 
     public static void debug(String msg) {
-        //LOG.fine(msg);
+        LOG.info(msg);
     }
 
 
@@ -94,6 +98,7 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
 
     private void registerToolJobs() {
         WorkerHelper.registerToolJob(ToolType.SHOVEL, new ShovelJob());
+        WorkerHelper.registerToolJob(ToolType.CHISEL, new ChiselJob());
     }
 
     private void registerRunner() {

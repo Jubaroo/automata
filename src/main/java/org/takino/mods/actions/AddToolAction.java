@@ -5,6 +5,7 @@ import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.behaviours.ActionEntry;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
+import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.players.Player;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.BehaviourProvider;
@@ -40,7 +41,8 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
             target.getSpellEffect((byte) 121)!=null && !WorkerHelper.contains(target.getWurmId()) &&
                     !DatabaseHelper.hasTool(target)) {
-                if (subject.getTemplateId() == 25) { // shovel
+                if (subject.getTemplateId() == ItemList.shovel || // shovel
+                        subject.getTemplateId() == ItemList.stoneChisel) {
                     return Collections.singletonList(actionEntry);
                 }
             }
