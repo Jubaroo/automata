@@ -73,9 +73,7 @@ public class WorkerHelper {
 
 
     public static void removeItemFromBsb(Item bsb, Item toRemove, int number) {
-        Iterator<Item> items = bsb.getItems().iterator();
-        while (items.hasNext()) {
-            Item i = items.next();
+        for (Item i : bsb.getItemsAsArray()) {
             if (i.getRealTemplateId() == toRemove.getTemplateId() &&
                     i.getMaterial() == toRemove.getMaterial() &&
                     i.getAuxData() == toRemove.getAuxData()) {

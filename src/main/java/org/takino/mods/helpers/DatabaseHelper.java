@@ -239,7 +239,7 @@ public class DatabaseHelper {
                                 c.getCommunicator().sendNormalServerMessage(message);
                             }
                         }
-                    } catch (NoSuchZoneException var12) {
+                    } catch (NoSuchZoneException|NullPointerException e) {
                         ;
                     }
                 }
