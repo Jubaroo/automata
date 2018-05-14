@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.bundling.Zip
+
 group 'AllTheMods'
 version '1.0'
 
@@ -7,9 +9,25 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url "http://gotti.no-ip.org/maven/repository" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'org.gotti.wurmunlimited:server-modlauncher:0.35-beta1'
+}
+
+jar {
+    archiveName "${project.name}.jar"
+}
+
+task dist(type: Zip) {
+    into("mods", {
+        into(project.name, {
+            from jar
+        })
+        from fileTree(dir: 'mods', include: '*')
+    })
+
+    archiveName "${project.name}-${project.version}.zip"
 }

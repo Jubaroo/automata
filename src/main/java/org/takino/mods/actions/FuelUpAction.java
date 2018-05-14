@@ -1,6 +1,5 @@
 package org.takino.mods.actions;
 
-import com.wurmonline.server.Items;
 import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.behaviours.ActionEntry;
 import com.wurmonline.server.creatures.Creature;
@@ -12,10 +11,8 @@ import org.gotti.wurmunlimited.modsupport.actions.ModAction;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.Config;
 import org.takino.mods.helpers.DatabaseHelper;
-import org.takino.mods.helpers.WorkerHelper;
 
-import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FuelUpAction implements ModAction, BehaviourProvider, ActionPerformer {
@@ -36,10 +33,11 @@ public class FuelUpAction implements ModAction, BehaviourProvider, ActionPerform
     public List<ActionEntry> getBehavioursFor(Creature performer, Item subject, Item target) {
 
         try {
+            // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
-                    target.getSpellEffect(Config.spellId)!=null) {
+                    target.getSpellEffect((byte) 121)!=null) {
                 if (subject.isGem()) { // shovel
-                    return Arrays.asList(actionEntry);
+                    return Collections.singletonList(actionEntry);
                 }
             }
         } catch (Exception e) {

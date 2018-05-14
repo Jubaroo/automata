@@ -9,11 +9,9 @@ import com.wurmonline.server.items.ItemFactory;
 import com.wurmonline.server.items.NoSuchTemplateException;
 import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zones;
-import org.takino.mods.Config;
 import org.takino.mods.ToolType;
 import org.takino.mods.tools.ToolJob;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.takino.mods.Automata.debug;
@@ -47,9 +45,8 @@ public class WorkerHelper {
             runningJobs.remove(wurmid);
             performerMap.remove(wurmid);
             startedMap.remove(wurmid);
-            Item item = null;
             try {
-                item = Items.getItem(wurmid);
+                Item item = Items.getItem(wurmid);
                 item.setTemplateId(934);
                 item.updateModelNameOnGroundItem();
             } catch (NoSuchItemException e) {
@@ -79,9 +76,9 @@ public class WorkerHelper {
 
 
     public static Item findBulkContainerOrNull(Item item, boolean returnFull) {
-        int initialX = (int) item.getTileX();
-        int initialY = (int) item.getTileY();
-        float effect = item.getSpellEffectPower(Config.spellId);
+        int initialX = item.getTileX();
+        int initialY = item.getTileY();
+        float effect = item.getSpellEffectPower((byte) 121); //TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
         int radius = (int) Math.max(1.0, effect / 10);
         for (int x = initialX - radius; x <= initialX + radius; x++) {
             for (int y = initialY - radius; y <= initialY + radius; y++) {
@@ -107,7 +104,7 @@ public class WorkerHelper {
 
 
 
-    public static void addItemToCrate(Item crate, Item toInsert) throws NoSuchTemplateException, FailedException, IOException {
+    public static void addItemToCrate(Item crate, Item toInsert) throws NoSuchTemplateException, FailedException {
         Iterator<Item> items = crate.getItems().iterator();
         Item toAddTo = null;
         while (items.hasNext()) {
@@ -143,7 +140,7 @@ public class WorkerHelper {
         } else {
             debug("Creating the stuff!");
             toAddTo = ItemFactory.createItem(669,
-                    toInsert.getCurrentQualityLevel(), toInsert.getMaterial(), (byte) 0, (String) null);
+                    toInsert.getCurrentQualityLevel(), toInsert.getMaterial(), (byte) 0, null);
             toAddTo.setRealTemplate(toInsert.getTemplateId());
             toAddTo.setAuxData(toInsert.getAuxData());
             float fe = (float) toInsert.getWeightGrams() / (float) toInsert.getTemplate().getWeightGrams();

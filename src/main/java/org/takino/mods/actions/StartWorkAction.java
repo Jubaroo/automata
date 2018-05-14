@@ -12,7 +12,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.Config;
 import org.takino.mods.helpers.WorkerHelper;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class StartWorkAction implements ModAction, BehaviourProvider, ActionPerformer {
@@ -32,9 +32,10 @@ public class StartWorkAction implements ModAction, BehaviourProvider, ActionPerf
     @Override
     public List<ActionEntry> getBehavioursFor(Creature performer, Item target) {
 
+        // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
         if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
-                target.getSpellEffect(Config.spellId)!=null && !WorkerHelper.contains(target.getWurmId())) {
-            return Arrays.asList(actionEntry);
+                target.getSpellEffect((byte) 121)!=null && !WorkerHelper.contains(target.getWurmId())) {
+            return Collections.singletonList(actionEntry);
         }
         return null;
     }

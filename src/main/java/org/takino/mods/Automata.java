@@ -3,13 +3,8 @@ package org.takino.mods;
 import com.wurmonline.server.FailedException;
 import com.wurmonline.server.Items;
 import com.wurmonline.server.NoSuchItemException;
-import com.wurmonline.server.deities.Deities;
-import com.wurmonline.server.deities.Deity;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.NoSuchTemplateException;
-import com.wurmonline.server.spells.LabouringSpirit;
-import com.wurmonline.server.spells.Spells;
-import org.gotti.wurmunlimited.modloader.ReflectionUtil;
 import org.gotti.wurmunlimited.modloader.interfaces.*;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.actions.AddToolAction;
@@ -21,7 +16,6 @@ import org.takino.mods.tools.ShovelJob;
 import org.takino.mods.tools.ToolJob;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -35,22 +29,10 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
 
     @Override
     public void configure(Properties properties) {
-        Integer difficulty = Integer.parseInt(properties.getProperty("difficulty", "90"));
-        Integer favor = Integer.parseInt(properties.getProperty("favor", "120"));
-        Integer level = Integer.parseInt(properties.getProperty("faith", "31"));
-        Integer cooldown = Integer.parseInt(properties.getProperty("cooldown", "1800"));
-        Integer castTime = Integer.parseInt(properties.getProperty("castingTime", "60"));
-        Byte spellId = Byte.parseByte(properties.getProperty("spellid", "111"));
         Integer maxQuality = Integer.parseInt(properties.getProperty("max_quality", "20"));
         Integer baseQuantity = Integer.parseInt(properties.getProperty("quantity", "1"));
         Integer pollTimer = Integer.parseInt(properties.getProperty("polltimer", "30"));
 
-        Config.spellDifficulty = difficulty;
-        Config.spellPrice = favor;
-        Config.spellCooldown = cooldown;
-        Config.spellLevel = level;
-        Config.spellCastingTime = castTime;
-        Config.spellId = spellId;
         Config.maxQualityLevel = maxQuality;
         Config.defaultQuantity = baseQuantity;
         Config.pollTimer = pollTimer;
@@ -92,7 +74,7 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
 
 
     public static void debug(String msg) {
-        LOG.info(msg);
+        //LOG.fine(msg);
     }
 
 
@@ -101,17 +83,6 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
         DatabaseHelper.createTable();
         debug("Registering spell");
 
-        LabouringSpirit spell = new LabouringSpirit();
-
-        try {
-            ReflectionUtil.callPrivateMethod(Spells.class, ReflectionUtil.getMethod(Spells.class, "addSpell"), spell);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-
-        for (Deity deity : Deities.getDeities()) {
-            deity.addSpell(spell);
-        }
         registerRunner();
 
         ModActions.registerAction(new StartWorkAction());

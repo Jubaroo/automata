@@ -15,7 +15,7 @@ import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
 
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AddToolAction implements ModAction, BehaviourProvider, ActionPerformer {
@@ -36,11 +36,12 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
     public List<ActionEntry> getBehavioursFor(Creature performer, Item subject, Item target) {
 
         try {
+            // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
-            target.getSpellEffect(Config.spellId)!=null && !WorkerHelper.contains(target.getWurmId()) &&
+            target.getSpellEffect((byte) 121)!=null && !WorkerHelper.contains(target.getWurmId()) &&
                     !DatabaseHelper.hasTool(target)) {
                 if (subject.getTemplateId() == 25) { // shovel
-                    return Arrays.asList(actionEntry);
+                    return Collections.singletonList(actionEntry);
                 }
             }
         } catch (SQLException e) {
