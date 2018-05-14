@@ -1,5 +1,5 @@
 group 'AllTheMods'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 apply plugin: 'java'
 
@@ -11,5 +11,5 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile fileTree('../libs')
+    compile 'org.gotti.wurmunlimited:server-modlauncher:0.35-beta1'
 }
