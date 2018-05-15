@@ -10,6 +10,7 @@ import org.gotti.wurmunlimited.modsupport.actions.BehaviourProvider;
 import org.gotti.wurmunlimited.modsupport.actions.ModAction;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.Automata;
+import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
 
 import java.util.Collections;
@@ -80,6 +81,9 @@ public class StartWorkAction implements ModAction, BehaviourProvider, ActionPerf
             if (WorkerHelper.contains(target.getWurmId())) {
                 performer.getCommunicator().sendNormalServerMessage("The device is already working!");
                 return true;
+            }
+            if (!WorkerHelper.hasEnoughPower(target, DatabaseHelper.getUsage(target))) {
+                performer.getCommunicator().sendNormalServerMessage("Strange device did not move after your command.");
             }
             performer.getCommunicator().sendNormalServerMessage("You command the strange device to start working!");
             //action.setTimeLeft(0);
