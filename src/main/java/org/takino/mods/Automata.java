@@ -10,6 +10,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.actions.AddToolAction;
 import org.takino.mods.actions.FuelUpAction;
 import org.takino.mods.actions.StartWorkAction;
+import org.takino.mods.actions.StopWorkAction;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
 import org.takino.mods.tools.ChiselJob;
@@ -90,6 +91,7 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
         registerRunner();
 
         ModActions.registerAction(new StartWorkAction());
+        ModActions.registerAction(new StopWorkAction());
         ModActions.registerAction(new AddToolAction());
         ModActions.registerAction(new FuelUpAction());
         registerToolJobs();
