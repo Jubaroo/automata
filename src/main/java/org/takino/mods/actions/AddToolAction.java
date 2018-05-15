@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+import static org.takino.mods.Automata.debug;
+
 public class AddToolAction implements ModAction, BehaviourProvider, ActionPerformer {
     private final short actionId;
     private final ActionEntry actionEntry;
@@ -37,11 +39,14 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
 
     @Override
     public List<ActionEntry> getBehavioursFor(Creature performer, Item subject, Item target) {
+        debug("Adding a tool?");
         try {
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
             Automata.getLabouringSpirits(target) > 0 && !WorkerHelper.contains(target.getWurmId()) &&
                     !DatabaseHelper.hasTool(target)) {
+                debug("Should add a tool.");
                 if (ToolType.supports(subject.getTemplateId())) {
+                    debug("Will do.");
                     return Collections.singletonList(actionEntry);
                 }
             }
@@ -66,7 +71,7 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
     @Override
     public boolean action(Action action, Creature performer, Item usedTool, Item target, short num, float counter) {
         try {
-            if(usedTool.getTemplateId() != ItemList.shovel && usedTool.getTemplateId() != ItemList.stoneChisel){
+            if(!ToolType.supports(usedTool.getTemplateId())){
                 performer.getCommunicator().sendNormalServerMessage("You must supply a proper tool.");
                 return true;
             }

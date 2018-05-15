@@ -5,6 +5,8 @@ import com.wurmonline.server.items.ItemList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.takino.mods.Automata.debug;
+
 public enum ToolType {
     BUCKET(9), // Milks nearby cows into biggest available container
     SPATULA(8), // Consumes clay, makes bricks
@@ -39,7 +41,7 @@ public enum ToolType {
     }
 
     public static ToolType getToolType(int id) {
-        Automata.debug("God id: " + id);
+        debug("God id: " + id);
         return toolTypes.get(id);
     }
 
@@ -49,6 +51,7 @@ public enum ToolType {
 
     public static boolean supports(int templateid) {
         for (int id: getImplementedToolsList()) {
+            debug("Is " + id + " equal to " + templateid + "?");
             if (id==templateid) {
                 return true;
             }

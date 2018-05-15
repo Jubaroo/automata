@@ -55,8 +55,12 @@ public class DatabaseHelper {
         Connection conn = ModSupportDb.getModSupportDb();
         ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM attached_tools where target==" + target.getWurmId() + ";");
         boolean result = false;
+        debug("Has tool?");
         if (rs.next()) {
-            result = true;
+            if (rs.getInt(rs.findColumn("attached"))!=0) {
+                debug("Has tool!");
+                result=true;
+            }
         }
         conn.close();
         return result;
