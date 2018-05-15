@@ -175,6 +175,11 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
                         workOnThings(target);
                     } catch (NoSuchItemException e) {
                         WorkerHelper.removeJob(itemid);
+                    } catch (Exception e) {
+
+                        //Woot?
+
+                        e.printStackTrace();
                     }
                 }
             }
