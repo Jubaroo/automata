@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ToolType {
+    BUCKET(9), // Milks nearby cows into biggest available container
+    SPATULA(8), // Consumes clay, makes bricks
+    TROWEL(7), // Combines clay + sand into mortar
     SHOVEL(6), // Digs resources from nearby tiles
     HATCHET(5), // Chops trees in few tiles surrounding it
     PICKAXE(4), // Mines vein nearby
     CHISEL(3), // Consumes shards, makes bricks
     SAW(2), // Consumes logs, makes planks
     CARVING_KNIFE(1), // Consumes logs, makes shafts
-    NONE(0) // Consumes clay, makes bricks
+    NONE(0) //
     ;
     private static Map<Integer,ToolType> toolTypes = new HashMap<>();
 
