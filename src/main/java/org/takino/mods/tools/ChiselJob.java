@@ -49,6 +49,9 @@ public class ChiselJob implements ToolJob {
             WorkerHelper.removeJob(item.getWurmId());
             return;
         }
+        if (!WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
+            WorkerHelper.removeJob(item.getWurmId());
+        }
         Item targetCrate = WorkerHelper.findBulkContainerOrNull(item);
         int num = (int) (Config.defaultQuantity + Config.defaultQuantity *
                 (Server.rand.nextFloat() * WorkerHelper.getMaxAmount(item)));
@@ -79,5 +82,6 @@ public class ChiselJob implements ToolJob {
         Item toRemove = ItemFactory.createItem(realid, 1,null);
         WorkerHelper.removeItemFromBsb(sourceBsb, toRemove, num);
         Items.destroyItem(toRemove.getWurmId());
+
     }
 }
