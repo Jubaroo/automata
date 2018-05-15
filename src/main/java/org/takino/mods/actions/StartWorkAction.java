@@ -9,6 +9,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.BehaviourProvider;
 import org.gotti.wurmunlimited.modsupport.actions.ModAction;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
+import org.takino.mods.Automata;
 import org.takino.mods.Config;
 import org.takino.mods.helpers.WorkerHelper;
 
@@ -72,7 +73,7 @@ public class StartWorkAction implements ModAction, BehaviourProvider, ActionPerf
                 performer.getCommunicator().sendNormalServerMessage("You cannot command this object to work for you.");
                 return true;
             }
-            if(target.getBonusForSpellEffect((byte) 121) <= 0){
+            if(Automata.getLabouringSpirits(target) <= 0){
                 performer.getCommunicator().sendNormalServerMessage("The device must be enchanted with Labouring Spirits before it can begin working.");
                 return true;
             }

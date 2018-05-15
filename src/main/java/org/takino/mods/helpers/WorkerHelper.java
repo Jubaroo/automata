@@ -6,9 +6,11 @@ import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemFactory;
+import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.items.NoSuchTemplateException;
 import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zones;
+import org.takino.mods.Automata;
 import org.takino.mods.ToolType;
 import org.takino.mods.tools.ToolJob;
 
@@ -142,7 +144,7 @@ public class WorkerHelper {
     public static Item findBulkContainerOrNull(Item item, int containedItem) {
         int initialX = item.getTileX();
         int initialY = item.getTileY();
-        float effect = item.getSpellEffectPower((byte) 121); //TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
+        float effect = Automata.getLabouringSpirits(item);
         int radius = (int) Math.max(1.0, effect / 10);
         for (int x = initialX - radius; x <= initialX + radius; x++) {
             for (int y = initialY - radius; y <= initialY + radius; y++) {
@@ -173,7 +175,7 @@ public class WorkerHelper {
     public static Item findBulkContainerOrNull(Item item, boolean returnFull) {
         int initialX = item.getTileX();
         int initialY = item.getTileY();
-        float effect = item.getSpellEffectPower((byte) 121); //TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
+        float effect = Automata.getLabouringSpirits(item);
         int radius = (int) Math.max(1.0, effect / 10);
         for (int x = initialX - radius; x <= initialX + radius; x++) {
             for (int y = initialY - radius; y <= initialY + radius; y++) {
@@ -201,10 +203,9 @@ public class WorkerHelper {
         for (Item i : crate.getItemsAsArray()) {
             count += i.getBulkNums();
         }
-        if (crate.getTemplateId() == 852) {
+        if (crate.getTemplateId() == ItemList.crateLarge) {
             debug("Large container found!");
             return count >= 300;
-
         } else {
             debug("Small container found!");
             return count >= 150;
@@ -225,7 +226,8 @@ public class WorkerHelper {
 
 
     public static int getMaxAmount(Item item) {
-        return (int) Math.max(1.0, item.getSpellEffectPower((byte) 121) / 10 + item.getCurrentQualityLevel() / 20);
+        float effect = Automata.getLabouringSpirits(item);
+        return (int) Math.max(1.0, effect / 10 + item.getCurrentQualityLevel() / 20);
     }
 
 }

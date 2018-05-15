@@ -56,6 +56,10 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
 
     }
 
+    public static float getLabouringSpirits(Item item){
+        return item.getBonusForSpellEffect((byte) 121);
+    }
+
 
     private static void workOnThings(Item item) {
         //find attached tool

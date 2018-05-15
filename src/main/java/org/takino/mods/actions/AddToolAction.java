@@ -11,6 +11,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.BehaviourProvider;
 import org.gotti.wurmunlimited.modsupport.actions.ModAction;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
+import org.takino.mods.Automata;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
 
@@ -35,11 +36,9 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
 
     @Override
     public List<ActionEntry> getBehavioursFor(Creature performer, Item subject, Item target) {
-
         try {
-            // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
-            target.getSpellEffect((byte) 121)!=null && !WorkerHelper.contains(target.getWurmId()) &&
+            Automata.getLabouringSpirits(target) > 0 && !WorkerHelper.contains(target.getWurmId()) &&
                     !DatabaseHelper.hasTool(target)) {
                 if (subject.getTemplateId() == ItemList.shovel || // shovel
                         subject.getTemplateId() == ItemList.stoneChisel) {

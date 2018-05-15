@@ -8,6 +8,7 @@ import com.wurmonline.server.items.ItemFactory;
 import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.items.NoSuchTemplateException;
 import com.wurmonline.server.sounds.SoundPlayer;
+import org.takino.mods.Automata;
 import org.takino.mods.Config;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
@@ -37,7 +38,6 @@ public class ShovelJob implements ToolJob {
         if (!item.isOnSurface()) {
             return;
         }
-        // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
 
        if (!WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
            return;
@@ -49,8 +49,7 @@ public class ShovelJob implements ToolJob {
         byte foundType = 0;
         //VolaTile vtile = Zones.getTileOrNull(posx, posy, item.isOnSurface());
 
-        // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
-        float effect = item.getSpellEffectPower((byte) 121);
+        float effect = Automata.getLabouringSpirits(item);
         int radius = (int) Math.max(1.0, effect / 10);
         int maxAmount = WorkerHelper.getMaxAmount(item);
         outerloop:

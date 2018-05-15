@@ -31,8 +31,6 @@ public class StopWorkAction implements ModAction, BehaviourProvider, ActionPerfo
 
     @Override
     public List<ActionEntry> getBehavioursFor(Creature performer, Item target) {
-
-        // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
         if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
                 WorkerHelper.contains(target.getWurmId())) {
             return Collections.singletonList(actionEntry);

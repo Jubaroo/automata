@@ -9,6 +9,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.BehaviourProvider;
 import org.gotti.wurmunlimited.modsupport.actions.ModAction;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
+import org.takino.mods.Automata;
 import org.takino.mods.helpers.DatabaseHelper;
 
 import java.util.Collections;
@@ -33,10 +34,9 @@ public class FuelUpAction implements ModAction, BehaviourProvider, ActionPerform
     public List<ActionEntry> getBehavioursFor(Creature performer, Item subject, Item target) {
 
         try {
-            // TODO: Replace (byte) 121 with SpellcraftSpell.LABOURING_SPIRIT.getEnchant()
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
-                    target.getSpellEffect((byte) 121)!=null) {
-                if (subject.isGem()) { // shovel
+                    Automata.getLabouringSpirits(target) > 0) {
+                if (subject.isGem()) {
                     return Collections.singletonList(actionEntry);
                 }
             }
