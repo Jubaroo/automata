@@ -5,4 +5,5 @@ public class Config {
     public static Integer maxQualityLevel;
     public static Integer defaultQuantity;
     public static Integer pollTimer;
+    public static boolean debug;
 }

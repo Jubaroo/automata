@@ -42,10 +42,12 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
         Integer maxQuality = Integer.parseInt(properties.getProperty("max_quality", "20"));
         Integer baseQuantity = Integer.parseInt(properties.getProperty("quantity", "1"));
         Integer pollTimer = Integer.parseInt(properties.getProperty("polltimer", "30"));
+        Boolean debug = Boolean.parseBoolean(properties.getProperty("debug", "false"));
 
         Config.maxQualityLevel = maxQuality;
         Config.defaultQuantity = baseQuantity;
         Config.pollTimer = pollTimer;
+        Config.debug=debug;
     }
 
     @Override
@@ -136,7 +138,9 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
 
 
     public static void debug(String msg) {
-        LOG.info(msg);
+        if (Config.debug) {
+            LOG.info(msg);
+        }
     }
 
 
