@@ -17,13 +17,14 @@ import java.util.List;
 public class StopWorkAction implements ModAction, BehaviourProvider, ActionPerformer {
     private final short actionId;
     private final ActionEntry actionEntry;
+
     public StopWorkAction() {
         actionId = (short) ModActions.getNextActionId();
         actionEntry = ActionEntry.createEntry(
                 actionId,
                 "Stop working",
                 "commanding",
-                new int[] { 0 }
+                new int[]{0}
                 //new int[] { 6 /* ACTION_TYPE_NOMOVE */ }	// 6 /* ACTION_TYPE_NOMOVE */, 48 /* ACTION_TYPE_ENEMY_ALWAYS */, 36 /* ACTION_TYPE_ALWAYS_USE_ACTIVE_ITEM */
         );
         ModActions.registerAction(actionEntry);
@@ -65,11 +66,11 @@ public class StopWorkAction implements ModAction, BehaviourProvider, ActionPerfo
     public boolean action(Action action, Creature performer, Item target, short num, float counter) {
         // return false;
         try {
-            if(!(target.isUnenchantedTurret() || target.isEnchantedTurret())){
+            if (!(target.isUnenchantedTurret() || target.isEnchantedTurret())) {
                 performer.getCommunicator().sendNormalServerMessage("You cannot command this object to work for you.");
                 return true;
             }
-            if(!WorkerHelper.contains(target.getWurmId())){
+            if (!WorkerHelper.contains(target.getWurmId())) {
                 performer.getCommunicator().sendNormalServerMessage("The device is already not working!");
                 return true;
             }

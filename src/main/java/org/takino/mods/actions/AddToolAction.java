@@ -12,6 +12,7 @@ import org.gotti.wurmunlimited.modsupport.actions.BehaviourProvider;
 import org.gotti.wurmunlimited.modsupport.actions.ModAction;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.Automata;
+import org.takino.mods.ToolType;
 import org.takino.mods.helpers.DatabaseHelper;
 import org.takino.mods.helpers.WorkerHelper;
 
@@ -40,8 +41,7 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
             if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
             Automata.getLabouringSpirits(target) > 0 && !WorkerHelper.contains(target.getWurmId()) &&
                     !DatabaseHelper.hasTool(target)) {
-                if (subject.getTemplateId() == ItemList.shovel || // shovel
-                        subject.getTemplateId() == ItemList.stoneChisel) {
+                if (ToolType.supports(subject.getTemplateId())) {
                     return Collections.singletonList(actionEntry);
                 }
             }

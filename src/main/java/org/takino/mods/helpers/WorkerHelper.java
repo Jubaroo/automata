@@ -75,8 +75,8 @@ public class WorkerHelper {
 
 
     public static void removeItemFromBsb(Item bsb, Item toRemove, int number) {
-        if (number<0) {
-           number = - number;
+        if (number < 0) {
+            number = -number;
         }
         for (Item i : bsb.getItemsAsArray()) {
             if (i.getRealTemplateId() == toRemove.getTemplateId() &&

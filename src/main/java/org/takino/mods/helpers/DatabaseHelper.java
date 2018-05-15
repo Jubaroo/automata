@@ -25,8 +25,8 @@ public class DatabaseHelper {
         try {
             supportDb.createStatement().execute("CREATE TABLE IF NOT EXISTS attached_tools " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT, target INTEGER UNIQUE, attached INTEGER) ");
-            supportDb.createStatement().execute("CREATE TABLE IF NOT EXISTS strange_device_powers"+
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, target INTEGER UNIQUE, powerlevel FLOAT);");
+            supportDb.createStatement().execute("CREATE TABLE IF NOT EXISTS strange_device_powers" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, target INTEGER UNIQUE, powerlevel FLOAT);");
             supportDb.close();
 
         } catch (SQLException e) {
@@ -91,35 +91,35 @@ public class DatabaseHelper {
 
 
     public static void increasePower(Item item, float power) {
-        if (power<0) {
-            power=-power;
+        if (power < 0) {
+            power = -power;
         }
         Connection supportDb = ModSupportDb.getModSupportDb();
         float currentPower = getCurrentPowerLevel(item);
-        currentPower+=power;
-        if (currentPower>getMaximumPower(item)) {
+        currentPower += power;
+        if (currentPower > getMaximumPower(item)) {
             //Should something bad happen?
             Zones.flash(item.getTileX(), item.getTileY(), false);
             //TODO : Replace with proper spell effect
-            item.getSpellEffect((byte)121).setPower((float)(Automata.getLabouringSpirits(item)*0.9));
+            item.getSpellEffect((byte) 121).setPower((float) (Automata.getLabouringSpirits(item) * 0.9));
 
-            String force="violent";
-            float sp = item.getSpellEffectPower((byte)121);
-            if (sp<70)  {
-                force="loud";
+            String force = "violent";
+            float sp = item.getSpellEffectPower((byte) 121);
+            if (sp < 70) {
+                force = "loud";
             }
-            if (sp<50) {
-                force="";
+            if (sp < 50) {
+                force = "";
             }
-            if (sp<20) {
-                force="silent";
+            if (sp < 20) {
+                force = "silent";
             }
-            if (sp<10) {
-                force="barely heard";
+            if (sp < 10) {
+                force = "barely heard";
             }
-            String message = "You hear " +   force + " thunder, as some spirits escape " +
+            String message = "You hear " + force + " thunder, as some spirits escape " +
                     item.getName() + " after power overload.";
-            sendMessageToPlayersAroundItem(message,item, 50);
+            sendMessageToPlayersAroundItem(message, item, 50);
             currentPower = getMaximumPower(item);
         }
 
@@ -134,12 +134,12 @@ public class DatabaseHelper {
     }
 
     public static void decreasePower(Item item, float power) {
-        if (power>0) {
-            power=-power;
+        if (power > 0) {
+            power = -power;
         }
         Connection supportDb = ModSupportDb.getModSupportDb();
         float currentPower = getCurrentPowerLevel(item);
-        currentPower+=power;
+        currentPower += power;
         try {
             supportDb.createStatement().execute("INSERT OR REPLACE INTO strange_device_powers (target, powerlevel) " +
                     "values (" + item.getWurmId() + ", " + currentPower + ");");
@@ -171,51 +171,51 @@ public class DatabaseHelper {
     }
 
     public static float getMaximumPower(Item item) {
-        return (float)(100+Math.pow(item.getCurrentQualityLevel(),2));
+        return (float) (100 + Math.pow(item.getCurrentQualityLevel(), 2));
     }
 
 
     public static float getUsage(Item item) {
-        return Math.max(Math.min(150.0f/(item.getQualityLevel()+Automata.getLabouringSpirits(item)),3.0f),0.5f);
+        return Math.max(Math.min(150.0f / (item.getQualityLevel() + Automata.getLabouringSpirits(item)), 3.0f), 0.5f);
     }
 
     public static String getUsageString(Item item) {
         float usage = getUsage(item);
         String result = "It uses";
         if (usage > 2.5) {
-            result+=" enormous amounts ";
+            result += " enormous amounts ";
         } else if (usage > 2.0) {
-            result+=" a lot ";
+            result += " a lot ";
         } else if (usage > 1.0) {
-            result+=" some amount ";
+            result += " some amount ";
         } else {
-            result+=" only marginal quantities ";
+            result += " only marginal quantities ";
         }
-        result+=" of power.";
+        result += " of power.";
         return result;
     }
 
     public static String getPowerLevelString(Item item) {
         float currentPower = getCurrentPowerLevel(item);
         float maxPower = getMaximumPower(item);
-        float percentPower = (currentPower/maxPower)*100;
-        String powerString=" no ";
-        if (percentPower>0.1) {
-            powerString=" a little ";
+        float percentPower = (currentPower / maxPower) * 100;
+        String powerString = " no ";
+        if (percentPower > 0.1) {
+            powerString = " a little ";
         }
-        if (percentPower>10) {
-            powerString=" some ";
+        if (percentPower > 10) {
+            powerString = " some ";
         }
-        if (percentPower>30) {
-            powerString=" quite some ";
+        if (percentPower > 30) {
+            powerString = " quite some ";
         }
-        if (percentPower>60) {
-            powerString=" a lot of ";
+        if (percentPower > 60) {
+            powerString = " a lot of ";
         }
-        if (percentPower>90) {
+        if (percentPower > 90) {
             return "It shakes violently from amount of power it currently holds.";
         }
-        if (percentPower>80) {
+        if (percentPower > 80) {
             return "It vibrates from the amount of power it currently holds.";
         }
         return "It emits" + powerString + "power.";
@@ -228,17 +228,17 @@ public class DatabaseHelper {
             int tilex = theItem.getTileX();
             int tiley = theItem.getTileY();
 
-            for(int x = tilex - lTileDist; x <= tilex + lTileDist; ++x) {
-                for(int y = tiley - lTileDist; y <= tiley + lTileDist; ++y) {
+            for (int x = tilex - lTileDist; x <= tilex + lTileDist; ++x) {
+                for (int y = tiley - lTileDist; y <= tiley + lTileDist; ++y) {
                     try {
                         Zone zone = Zones.getZone(x, y, theItem.isOnSurface());
                         VolaTile tile = zone.getTileOrNull(x, y);
-                        for (Creature c: tile.getCreatures()) {
+                        for (Creature c : tile.getCreatures()) {
                             if (c instanceof Player) {
                                 c.getCommunicator().sendNormalServerMessage(message);
                             }
                         }
-                    } catch (NoSuchZoneException|NullPointerException e) {
+                    } catch (NoSuchZoneException | NullPointerException e) {
                         ;
                     }
                 }

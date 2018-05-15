@@ -49,36 +49,40 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
     }
 
     @Override
-    public void init() {}
+    public void init() {
+    }
 
-    public static void handleExamine(Creature performer, Item target){
-        if(target.isUnenchantedTurret() || target.isEnchantedTurret()){
+    public static void handleExamine(Creature performer, Item target) {
+        if (target.isUnenchantedTurret() || target.isEnchantedTurret()) {
             Communicator comm = performer.getCommunicator();
-            if(Automata.getLabouringSpirits(target) > 0){
-                if(DatabaseHelper.getCurrentPowerLevel(target) > 0){
+            if (Automata.getLabouringSpirits(target) > 0) {
+                if (DatabaseHelper.getCurrentPowerLevel(target) > 0) {
                     try {
                         ToolType toolType = DatabaseHelper.getAttachedTool(target);
-                        if(toolType != null && toolType != ToolType.NONE){
-                            if(WorkerHelper.contains(target.getWurmId())){
+                        if (toolType != null && toolType != ToolType.NONE) {
+                            if (WorkerHelper.contains(target.getWurmId())) {
                                 String builder = "The device is currently at work ";
                                 builder = builder + ToolType.getJobString(toolType) + ". ";
                                 builder = builder + DatabaseHelper.getUsageString(target);
                                 comm.sendNormalServerMessage(builder);
-                            }else{
-                                comm.sendNormalServerMessage("The device is alive, powered, and equipped. It's ready to work. Give it a proper place to work and a crate, then command it to begin.");
+                            } else {
+                                comm.sendNormalServerMessage("The device is alive, powered, and equipped. It's ready to " +
+                                        "work. Give it a proper place to work and a crate, then command it to begin.");
                             }
-                        }else{
-                            comm.sendNormalServerMessage("The device is alive and powered, but requires a tool. It refuses to work with anything but the best. Looks like you can't just give it any ordinary tool.");
+                        } else {
+                            comm.sendNormalServerMessage("The device is alive and powered, but requires a tool. It " +
+                                    "refuses to work with anything but the best. Looks like you can't just give it any " +
+                                    "ordinary tool.");
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                     // If it has power, we should display the remaining power upon examine every time.
                     comm.sendNormalServerMessage(DatabaseHelper.getPowerLevelString(target));
-                }else{
+                } else {
                     comm.sendNormalServerMessage("The device is alive, but powerless. It requires favor to operate, but what could facilitate the transfer?");
                 }
-            }else{
+            } else {
                 comm.sendNormalServerMessage("The device is lifeless. Perhaps casting some spirits into it would awaken further abilities?");
             }
         }
@@ -91,23 +95,23 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
           private boolean poll(Item parent, int parentTemp, boolean insideStructure,
           boolean deeded, boolean saveLastMaintained, boolean inMagicContainer, boolean inTrashbin) {
          */
-        try{
+        try {
             ClassPool classPool = HookManager.getInstance().getClassPool();
             final Class<Automata> thisClass = Automata.class;
             String replace;
 
             Util.setReason("Insert examine method.");
             CtClass ctItemBehaviour = classPool.get("com.wurmonline.server.behaviours.ItemBehaviour");
-            replace = Automata.class.getName()+".handleExamine($2, $3);";
+            replace = Automata.class.getName() + ".handleExamine($2, $3);";
             Util.insertAfterDeclared(thisClass, ctItemBehaviour, "examine", replace);
 
-        } catch ( NotFoundException | IllegalArgumentException | ClassCastException e) {
+        } catch (NotFoundException | IllegalArgumentException | ClassCastException e) {
             throw new HookException(e);
         }
 
     }
 
-    public static float getLabouringSpirits(Item item){
+    public static float getLabouringSpirits(Item item) {
         return item.getBonusForSpellEffect((byte) 121);
     }
 
@@ -172,7 +176,7 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
             }
         };
         timer = new Timer();
-        timer.schedule(runner, 0, Config.pollTimer*1000);
+        timer.schedule(runner, 0, Config.pollTimer * 1000);
     }
 
     @Override

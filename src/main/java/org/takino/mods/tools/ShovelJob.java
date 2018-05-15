@@ -23,9 +23,8 @@ public class ShovelJob implements ToolJob {
     }
 
 
-
     private static void playRandomSound(Item item) {
-        String[] sounds= {
+        String[] sounds = {
                 "sound.work.digging1",
                 "sound.work.digging2",
                 "sound.work.digging3"
@@ -39,9 +38,9 @@ public class ShovelJob implements ToolJob {
             return;
         }
 
-       if (!WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
-           return;
-       }
+        if (!WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
+            return;
+        }
 
         debug("Will be digging now.");
         int initialX = item.getTileX();
@@ -94,7 +93,7 @@ public class ShovelJob implements ToolJob {
                 (Server.rand.nextFloat() * maxAmount));
         debug("Creating " + num + " items");
         Item toInsert = ItemFactory.createItem(templateId, ql, (byte) 0, null);
-        toInsert.setWeight(num*toInsert.getTemplate().getWeightGrams(), true);
+        toInsert.setWeight(num * toInsert.getTemplate().getWeightGrams(), true);
         debug("Weight: " + toInsert.getWeightGrams());
         // toInsert.setWeight(num * toInsert.getTemplate().getWeightGrams(), true);
         WorkerHelper.addItemToCrate(container, toInsert);

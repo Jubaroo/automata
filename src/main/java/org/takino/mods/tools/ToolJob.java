@@ -7,5 +7,5 @@ import com.wurmonline.server.items.NoSuchTemplateException;
 import java.io.IOException;
 
 public interface ToolJob {
-    void doWork(Item target)  throws NoSuchTemplateException, FailedException, IOException;
+    void doWork(Item target) throws NoSuchTemplateException, FailedException, IOException;
 }

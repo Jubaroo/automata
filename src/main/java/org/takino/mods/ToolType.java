@@ -1,5 +1,7 @@
 package org.takino.mods;
 
+import com.wurmonline.server.items.ItemList;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,5 +41,18 @@ public enum ToolType {
     public static ToolType getToolType(int id) {
         Automata.debug("God id: " + id);
         return toolTypes.get(id);
+    }
+
+    private static int[] getImplementedToolsList() {
+        return new int[] {ItemList.shovel, ItemList.stoneChisel};
+    }
+
+    public static boolean supports(int templateid) {
+        for (int id: getImplementedToolsList()) {
+            if (id==templateid) {
+                return true;
+            }
+        }
+        return false;
     }
 }

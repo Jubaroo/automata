@@ -26,7 +26,7 @@ public class ChiselJob implements ToolJob {
     }
 
     private static void playRandomSound(Item item) {
-        String[] sounds= {
+        String[] sounds = {
                 "sound.work.masonry",
                 "sound.work.stonecutting"
         };
@@ -36,7 +36,7 @@ public class ChiselJob implements ToolJob {
 
     private static void chiselSome(Item item) throws NoSuchTemplateException, FailedException {
         int[] templates = {ItemList.rock, ItemList.slateShard, ItemList.marbleShard, ItemList.sandstone};
-        int realid=0;
+        int realid = 0;
         Item sourceBsb = null;
         for (int templateid : templates) {
             sourceBsb = findSourceBsb(item, templateid);
@@ -45,7 +45,7 @@ public class ChiselJob implements ToolJob {
                 break;
             }
         }
-        if (sourceBsb==null) {
+        if (sourceBsb == null) {
             WorkerHelper.removeJob(item.getWurmId());
             return;
         }
@@ -55,19 +55,19 @@ public class ChiselJob implements ToolJob {
         Item targetCrate = WorkerHelper.findBulkContainerOrNull(item);
         int num = (int) (Config.defaultQuantity + Config.defaultQuantity *
                 (Server.rand.nextFloat() * WorkerHelper.getMaxAmount(item)));
-        int templateId=0;
+        int templateId = 0;
         switch (realid) {
             case ItemList.rock:
-                templateId=ItemList.stoneBrick;
+                templateId = ItemList.stoneBrick;
                 break;
             case ItemList.slateShard:
-                templateId=ItemList.slateBrick;
+                templateId = ItemList.slateBrick;
                 break;
             case ItemList.marbleShard:
-                templateId=ItemList.marbleBrick;
+                templateId = ItemList.marbleBrick;
                 break;
             case ItemList.sandstone:
-                templateId=ItemList.sandstoneBrick;
+                templateId = ItemList.sandstoneBrick;
                 break;
             default:
                 return;
@@ -75,11 +75,11 @@ public class ChiselJob implements ToolJob {
         float ql = Server.rand.nextFloat() * Config.maxQualityLevel;
         playRandomSound(item);
         Item creation = ItemFactory.createItem(templateId, ql, (byte) 0, null);
-        creation.setWeight(num*creation.getTemplate().getWeightGrams(), true);
+        creation.setWeight(num * creation.getTemplate().getWeightGrams(), true);
         WorkerHelper.addItemToCrate(targetCrate, creation);
         targetCrate.updateModelNameOnGroundItem();
         DatabaseHelper.decreasePower(item, DatabaseHelper.getUsage(item));
-        Item toRemove = ItemFactory.createItem(realid, 1,null);
+        Item toRemove = ItemFactory.createItem(realid, 1, null);
         WorkerHelper.removeItemFromBsb(sourceBsb, toRemove, num);
         Items.destroyItem(toRemove.getWurmId());
 

@@ -72,9 +72,6 @@ public class FuelUpAction implements ModAction {
                         source.setData1(0);
                         source.setQualityLevel(source.getCurrentQualityLevel() - (power/multiplier));
                         DatabaseHelper.increasePower(target, power);
-                        // DatabaseHelper.setTool(vesseledGem, target);
-                        // Items.destroyItem(vesseledGem.getWurmId());
-
                     } else {
                         performer.getCommunicator().sendNormalServerMessage("The gem must be vesseled.");
                     }
