@@ -14,8 +14,11 @@ import org.takino.mods.helpers.DatabaseHelper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
-public class FuelUpAction implements ModAction, BehaviourProvider, ActionPerformer {
+public class FuelUpAction implements ModAction {
+    private static Logger logger = Logger.getLogger(FuelUpAction.class.getName());
+
     private final short actionId;
     private final ActionEntry actionEntry;
     public FuelUpAction() {
@@ -24,67 +27,63 @@ public class FuelUpAction implements ModAction, BehaviourProvider, ActionPerform
                 actionId,
                 "Power up",
                 "powering",
-                new int[] { 0 }
+                new int[] { 6 }
                 //new int[] { 6 /* ACTION_TYPE_NOMOVE */ }	// 6 /* ACTION_TYPE_NOMOVE */, 48 /* ACTION_TYPE_ENEMY_ALWAYS */, 36 /* ACTION_TYPE_ALWAYS_USE_ACTIVE_ITEM */
         );
         ModActions.registerAction(actionEntry);
     }
 
     @Override
-    public List<ActionEntry> getBehavioursFor(Creature performer, Item subject, Item target) {
-
-        try {
-            if (performer instanceof Player && (target.isUnenchantedTurret() || target.isEnchantedTurret()) &&
-                    Automata.getLabouringSpirits(target) > 0) {
-                if (subject.isGem()) {
+    public BehaviourProvider getBehaviourProvider()
+    {
+        return new BehaviourProvider() {
+            // Menu with activated object
+            @Override
+            public List<ActionEntry> getBehavioursFor(Creature performer, Item source, Item object)
+            {
+                if (performer instanceof Player && (object.isUnenchantedTurret() || object.isEnchantedTurret()) &&
+                        Automata.getLabouringSpirits(object) > 0 && source.isGem()) {
                     return Collections.singletonList(actionEntry);
                 }
+                return null;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        };
     }
 
     @Override
-    public BehaviourProvider getBehaviourProvider() {
-        return this;
-    }
+    public ActionPerformer getActionPerformer()
+    {
+        return new ActionPerformer() {
 
-
-    @Override
-    public ActionPerformer getActionPerformer() {
-        return this;
-    }
-
-
-    @Override
-    public boolean action(Action action, Creature performer, Item vesseledGem, Item target, short num, float counter) {
-        try {
-            if (vesseledGem.isGem() && vesseledGem.getData1() >0) {
-                performer.getCommunicator().sendNormalServerMessage("Spirits hungrily consume the power!");
-                action.setTimeLeft(0);
-                int multiplier = target.getRarity() + 1;
-                int power = vesseledGem.getData1() * multiplier;
-                vesseledGem.setData1(0);
-                vesseledGem.setQualityLevel(vesseledGem.getCurrentQualityLevel() - (power/multiplier));
-                DatabaseHelper.increasePower(target, power);
-               // DatabaseHelper.setTool(vesseledGem, target);
-               // Items.destroyItem(vesseledGem.getWurmId());
-
-            } else {
-                performer.getCommunicator().sendNormalServerMessage("Gem is not vesseled.");
+            @Override
+            public short getActionId() {
+                return actionId;
             }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return true;
-        }
-    }
 
+            // With activated object
+            @Override
+            public boolean action(Action act, Creature performer, Item source, Item target, short action, float counter)
+            {
+                try {
+                    if (source.isGem() && source.getData1() >0) {
+                        performer.getCommunicator().sendNormalServerMessage("The spirits hungrily consume the power!");
+                        int multiplier = target.getRarity() + 1;
+                        int power = source.getData1() * multiplier;
+                        source.setData1(0);
+                        source.setQualityLevel(source.getCurrentQualityLevel() - (power/multiplier));
+                        DatabaseHelper.increasePower(target, power);
+                        // DatabaseHelper.setTool(vesseledGem, target);
+                        // Items.destroyItem(vesseledGem.getWurmId());
 
-    @Override
-    public short getActionId() {
-        return actionId;
+                    } else {
+                        performer.getCommunicator().sendNormalServerMessage("The gem must be vesseled.");
+                    }
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return true;
+                }
+            }
+        }; // ActionPerformer
     }
 }

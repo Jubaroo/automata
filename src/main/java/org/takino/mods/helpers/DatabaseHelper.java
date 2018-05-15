@@ -9,6 +9,7 @@ import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zone;
 import com.wurmonline.server.zones.Zones;
 import org.gotti.wurmunlimited.modsupport.ModSupportDb;
+import org.takino.mods.Automata;
 import org.takino.mods.ToolType;
 
 import java.sql.Connection;
@@ -100,9 +101,7 @@ public class DatabaseHelper {
             //Should something bad happen?
             Zones.flash(item.getTileX(), item.getTileY(), false);
             //TODO : Replace with proper spell effect
-            item.getSpellEffect((byte)121).
-                    setPower(
-                            (float)(item.getSpellEffectPower((byte)121)*0.9));
+            item.getSpellEffect((byte)121).setPower((float)(Automata.getLabouringSpirits(item)*0.9));
 
             String force="violent";
             float sp = item.getSpellEffectPower((byte)121);
@@ -177,7 +176,7 @@ public class DatabaseHelper {
 
 
     public static float getUsage(Item item) {
-        return Math.max(Math.min(50.0f/(item.getQualityLevel()+item.getSpellEffectPower((byte) 121)),3.0f),0.5f);
+        return Math.max(Math.min(150.0f/(item.getQualityLevel()+Automata.getLabouringSpirits(item)),3.0f),0.5f);
     }
 
     public static String getUsageString(Item item) {
@@ -200,7 +199,7 @@ public class DatabaseHelper {
         float currentPower = getCurrentPowerLevel(item);
         float maxPower = getMaximumPower(item);
         float percentPower = (currentPower/maxPower)*100;
-        String powerString="no";
+        String powerString=" no ";
         if (percentPower>0.1) {
             powerString=" a little ";
         }
@@ -219,7 +218,7 @@ public class DatabaseHelper {
         if (percentPower>80) {
             return "It vibrates from the amount of power it currently holds.";
         }
-        return "It emits" + powerString + " power.";
+        return "It emits" + powerString + "power.";
     }
 
 

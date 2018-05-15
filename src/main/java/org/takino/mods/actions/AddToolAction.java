@@ -28,7 +28,7 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
                 actionId,
                 "Infuse with tool",
                 "giving",
-                new int[] { 0 }
+                new int[] { 6 }
                 //new int[] { 6 /* ACTION_TYPE_NOMOVE */ }	// 6 /* ACTION_TYPE_NOMOVE */, 48 /* ACTION_TYPE_ENEMY_ALWAYS */, 36 /* ACTION_TYPE_ALWAYS_USE_ACTIVE_ITEM */
         );
         ModActions.registerAction(actionEntry);
@@ -66,7 +66,7 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
     @Override
     public boolean action(Action action, Creature performer, Item usedTool, Item target, short num, float counter) {
         try {
-            if(usedTool.getTemplateId() != ItemList.shovel || usedTool.getTemplateId() != ItemList.stoneChisel){
+            if(usedTool.getTemplateId() != ItemList.shovel && usedTool.getTemplateId() != ItemList.stoneChisel){
                 performer.getCommunicator().sendNormalServerMessage("You must supply a proper tool.");
                 return true;
             }
@@ -76,7 +76,7 @@ public class AddToolAction implements ModAction, BehaviourProvider, ActionPerfor
                 DatabaseHelper.setTool(usedTool, target);
                 Items.destroyItem(usedTool.getWurmId());
             } else {
-                performer.getCommunicator().sendNormalServerMessage("Spirits refuse to work with this crude tool. They require something shiny.");
+                performer.getCommunicator().sendNormalServerMessage("The spirits refuse to work with this. They require something shiny.");
             }
             return true;
         } catch (Exception e) {

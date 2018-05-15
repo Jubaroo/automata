@@ -24,8 +24,17 @@ public enum ToolType {
         }
     }
 
+    public static String getJobString(ToolType type){
+        if (type == ToolType.SHOVEL) {
+            return "digging nearby resources";
+        }else if (type == ToolType.CHISEL){
+            return "creating bricks from shards";
+        }
+        return "doing something";
+    }
+
     public static ToolType getToolType(int id) {
-        System.out.println("God id: " + id);
+        Automata.debug("God id: " + id);
         return toolTypes.get(id);
     }
 }

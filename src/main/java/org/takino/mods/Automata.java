@@ -3,8 +3,16 @@ package org.takino.mods;
 import com.wurmonline.server.FailedException;
 import com.wurmonline.server.Items;
 import com.wurmonline.server.NoSuchItemException;
+import com.wurmonline.server.creatures.Communicator;
+import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.NoSuchTemplateException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
+import mod.sin.lib.Util;
+import org.gotti.wurmunlimited.modloader.classhooks.HookException;
+import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
 import org.gotti.wurmunlimited.modloader.interfaces.*;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import org.takino.mods.actions.AddToolAction;
@@ -41,8 +49,39 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
     }
 
     @Override
-    public void init() {
+    public void init() {}
 
+    public static void handleExamine(Creature performer, Item target){
+        if(target.isUnenchantedTurret() || target.isEnchantedTurret()){
+            Communicator comm = performer.getCommunicator();
+            if(Automata.getLabouringSpirits(target) > 0){
+                if(DatabaseHelper.getCurrentPowerLevel(target) > 0){
+                    try {
+                        ToolType toolType = DatabaseHelper.getAttachedTool(target);
+                        if(toolType != null && toolType != ToolType.NONE){
+                            if(WorkerHelper.contains(target.getWurmId())){
+                                String builder = "The device is currently at work ";
+                                builder = builder + ToolType.getJobString(toolType) + ". ";
+                                builder = builder + DatabaseHelper.getUsageString(target);
+                                comm.sendNormalServerMessage(builder);
+                            }else{
+                                comm.sendNormalServerMessage("The device is alive, powered, and equipped. It's ready to work. Give it a proper place to work and a crate, then command it to begin.");
+                            }
+                        }else{
+                            comm.sendNormalServerMessage("The device is alive and powered, but requires a tool. It refuses to work with anything but the best. Looks like you can't just give it any ordinary tool.");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    // If it has power, we should display the remaining power upon examine every time.
+                    comm.sendNormalServerMessage(DatabaseHelper.getPowerLevelString(target));
+                }else{
+                    comm.sendNormalServerMessage("The device is alive, but powerless. It requires favor to operate, but what could facilitate the transfer?");
+                }
+            }else{
+                comm.sendNormalServerMessage("The device is lifeless. Perhaps casting some spirits into it would awaken further abilities?");
+            }
+        }
     }
 
     @Override
@@ -51,8 +90,20 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
         /*
           private boolean poll(Item parent, int parentTemp, boolean insideStructure,
           boolean deeded, boolean saveLastMaintained, boolean inMagicContainer, boolean inTrashbin) {
-
          */
+        try{
+            ClassPool classPool = HookManager.getInstance().getClassPool();
+            final Class<Automata> thisClass = Automata.class;
+            String replace;
+
+            Util.setReason("Insert examine method.");
+            CtClass ctItemBehaviour = classPool.get("com.wurmonline.server.behaviours.ItemBehaviour");
+            replace = Automata.class.getName()+".handleExamine($2, $3);";
+            Util.insertAfterDeclared(thisClass, ctItemBehaviour, "examine", replace);
+
+        } catch ( NotFoundException | IllegalArgumentException | ClassCastException e) {
+            throw new HookException(e);
+        }
 
     }
 
@@ -77,8 +128,6 @@ public class Automata implements WurmServerMod, PreInitable, Initable, Configura
         } catch (SQLException | NoSuchTemplateException | FailedException | IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
 
