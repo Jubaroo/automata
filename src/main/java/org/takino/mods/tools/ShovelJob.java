@@ -34,7 +34,8 @@ public class ShovelJob implements ToolJob {
     }
 
     private static void tryDigAround(Item item) throws NoSuchTemplateException, FailedException {
-        if (!item.isOnSurface() || !WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
+        if (!item.isOnSurface() ||
+                !WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
             WorkerHelper.removeJob(item.getWurmId());
             return;
         }

@@ -45,14 +45,16 @@ public class ChiselJob implements ToolJob {
                 break;
             }
         }
-        if (sourceBsb == null) {
+        Item targetCrate = WorkerHelper.findBulkContainerOrNull(item);
+
+        if (sourceBsb == null ||
+                !WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item)) ||
+                targetCrate == null
+                ) { //not enough power, or crate is null, or source is null - removing job
             WorkerHelper.removeJob(item.getWurmId());
             return;
         }
-        if (!WorkerHelper.hasEnoughPower(item, DatabaseHelper.getUsage(item))) {
-            WorkerHelper.removeJob(item.getWurmId());
-        }
-        Item targetCrate = WorkerHelper.findBulkContainerOrNull(item);
+
         int num = (int) (Config.defaultQuantity + Config.defaultQuantity *
                 (Server.rand.nextFloat() * WorkerHelper.getMaxAmount(item)));
         int templateId = 0;
