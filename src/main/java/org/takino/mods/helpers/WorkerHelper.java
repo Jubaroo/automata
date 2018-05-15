@@ -82,11 +82,16 @@ public class WorkerHelper {
             if (i.getRealTemplateId() == toRemove.getTemplateId() &&
                     i.getMaterial() == toRemove.getMaterial() &&
                     i.getAuxData() == toRemove.getAuxData()) {
+                debug("So current quantities are: [" + i.getBulkNumsFloat(false) + "] in bsb" +
+                "; substracting: [" + number + "]");
                 float newQuantity = i.getBulkNumsFloat(false) - number;
+                debug("Resulting quantity: " + newQuantity);
+                debug("Current weight: " + i.getWeightGrams());
                 if (newQuantity < 0) {
                     newQuantity = 0;
                 }
-                int newWeight = (int) newQuantity * i.getRealTemplate().getWeightGrams();
+                int newWeight = (int) ((i.getWeightGrams()/i.getBulkNumsFloat(false))*newQuantity);
+                debug("New weight: " + newWeight);
                 i.setWeight(newWeight, true);
             }
 
@@ -158,7 +163,7 @@ public class WorkerHelper {
                                 && !s.isCrate()) {
                             for (Item inside : s.getItemsAsArray()) {
                                 if (inside.getRealTemplateId() == containedItem) {
-                                    if (inside.getBulkNumsFloat(false) > 1) {
+                                    if (inside.getBulkNumsFloat(false) >= 1) {
                                         return s;
                                     }
                                 }
