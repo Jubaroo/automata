@@ -84,6 +84,7 @@ public class StartWorkAction implements ModAction, BehaviourProvider, ActionPerf
             }
             if (!WorkerHelper.hasEnoughPower(target, DatabaseHelper.getUsage(target))) {
                 performer.getCommunicator().sendNormalServerMessage("Strange device did not move after your command.");
+                return true;
             }
             performer.getCommunicator().sendNormalServerMessage("You command the strange device to start working!");
             //action.setTimeLeft(0);
